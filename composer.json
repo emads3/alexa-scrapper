@@ -3,7 +3,12 @@
     "description": "scrap alexa for some websites and register to DB",
     "type": "project",
     "require": {
-        "illuminate/database": "^7.22"
+        "illuminate/database": "^7.22",
+        "illuminate/events": "^7.22"
+    },
+    "autoload": {
+        "files": ["config.php"],
+        "classmap": ["core"]
     },
     "authors": [
         {
