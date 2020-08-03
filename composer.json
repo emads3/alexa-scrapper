@@ -1,0 +1,14 @@
+{
+    "name": "emads3/alexa-scrapper",
+    "description": "scrap alexa for some websites and register to DB",
+    "type": "project",
+    "require": {
+        "illuminate/database": "^7.22"
+    },
+    "authors": [
+        {
+            "name": "Emad Saeed",
+            "email": "e@emads3.com"
+        }
+    ]
+}
