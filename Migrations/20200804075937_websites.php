@@ -11,14 +11,14 @@ final class Websites extends Migration
 			// Auto-increment id
 			$table->id();
 			$table->string('domain')->unique()->nullable(false);
-			$table->integer('current_rank');
-			$table->decimal('bounce_rate');
-			$table->decimal('daily_pageviews_per_visitor');
-			$table->time('daily_time_on_site');
-			$table->string('main_country');
-			$table->text('top_keywords');
-			$table->decimal('percent_search');
-			$table->integer('linking_websites');
+			$table->integer('current_rank')->nullable();
+			$table->decimal('bounce_rate')->nullable();
+			$table->decimal('daily_pageviews_per_visitor')->nullable();
+			$table->time('daily_time_on_site')->nullable();
+			$table->string('main_country')->nullable();
+			$table->text('top_keywords')->nullable();
+			$table->decimal('percent_search')->nullable();
+			$table->integer('linking_websites')->nullable();
 
 			// Foreign Key Constraints
 			// $table->foreign('country_id')->references('id')->on('countries');

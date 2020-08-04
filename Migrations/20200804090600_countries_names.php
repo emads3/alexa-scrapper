@@ -10,7 +10,7 @@ final class CountriesNames extends Migration
 		$this->schema->create('countries_names', function (Illuminate\Database\Schema\Blueprint $table) {
 			// Auto-increment id
 			$table->id();
-			$table->string('name');
+			$table->string('name')->nullable(false)->unique();
 			$table->string('code');
 		});
 	}
