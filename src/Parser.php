@@ -18,7 +18,7 @@ class Parser
 			$this->content = $content;
 	}
 
-	public function ParseWebsite()
+	public function parseWebsite()
 	{
 		return [
 				'domain'           => $this->extractDomain(),
@@ -154,7 +154,7 @@ class Parser
 		preg_match_all($pattern, $metrics, $matches);
 
 		return [
-			'daily_pageview_per_visitor' => (float)trim($matches[1][0], " \t\n\r\0\x0B"),
+			'daily_pageviews_per_visitor' => (float)trim($matches[1][0], " \t\n\r\0\x0B"),
 			'daily_time_on_site'         => (float)trim($matches[1][1], " \t\n\r\0\x0B"),
 			'bounce_rate'                => (float)trim($matches[1][2], "% \t\n\r\0\x0B"),
 		];
