@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MonthlyRanking extends Model
 {
+	public $timestamps = false;
+
 	protected $table = 'rankings_monthly';
 
 	protected $guarded = [];
