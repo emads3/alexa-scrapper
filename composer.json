@@ -4,7 +4,6 @@
     "type": "project",
     "require": {
         "illuminate/database": "^7.22",
-        "illuminate/events": "^7.22",
         "robmorgan/phinx": "^0.12.3"
     },
     "autoload": {
