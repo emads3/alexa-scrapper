@@ -12,10 +12,9 @@ class Parser
 	 * Extractor constructor.
 	 * @param $content
 	 */
-	public function __construct($content = null)
+	public function __construct($content)
 	{
-		if (isset($content))
-			$this->content = $content;
+		$this->content = $content;
 	}
 
 	public function parseWebsite()
@@ -30,7 +29,7 @@ class Parser
 			] + $this->siteMetrics();
 	}
 
-	private function extractDomain()
+	public function extractDomain()
 	{
 		$pattern = '/<h1><strong>.*<\/strong>/U';
 
@@ -42,7 +41,8 @@ class Parser
 	public function currentRank()
 	{
 		$rankings = (array)$this->parseRankings();
-		return end($rankings);
+
+		return count($rankings) ? end($rankings) : null;
 	}
 
 	/**
@@ -51,17 +51,26 @@ class Parser
 	 */
 	public function parseRankings(): array
 	{
-		// TODO : check if the result is empty (site has no ranking)
+
 		$pattern = '/{\"3mrank\".*}}/';
 		preg_match($pattern, $this->content, $match);
-		return json_decode($match[0], true)['3mrank'];
+		$rankings = json_decode($match[0], true)['3mrank'];
+
+		// convert string ranking to int
+		foreach ($rankings as $key => $value) {
+			$rankings[$key] = (integer)$value;
+		}
+
+		return $rankings;
 	}
 
-	// TODO : check it, it's useless after extracting all countries and can be derived
+	// TODO after extracting all countries this can be derived from another method
 	public function mainCountry()
 	{
 		$pattern = '/<div id="countryName">(.*)<\/div>/U';
 		preg_match_all($pattern, $this->content, $matches);
+
+		if (count($matches[0]) === 0) return null;
 
 		$countryWithCode = explode('&nbsp;', $matches[1][0]);
 
@@ -71,12 +80,14 @@ class Parser
 	public function topKeywords()
 	{
 		$kw = $this->selector(
-			'ACard Mini  topkw  withcompound',
-			'#card_topkeywords"',
+			'<div class="ACard Half topkeywords withcompoundtooltips" id="card_topkeywords">',
+			'<div class="ADropdown competitorList outer" id="topKeywordsDropdown">',
 			$this->content,
-			[],
+			["\r\n", "\n", "\r", "\t", "  "],
 			false
 		);
+
+		if (empty($kw)) return null;
 
 		$pattern = '/keyword\ (.|\n)*<span class="truncation">(.*)<\/span>/U';
 
@@ -88,6 +99,7 @@ class Parser
 	private function selector($start_str = "", $end_str = "", $html = "", $replacer = [], $strip_tags = true): string
 	{
 		$start_data = explode($start_str, $html);
+		if (empty($start_data[1])) return '';
 		$end_data = explode($end_str, $start_data[1]);
 
 		$out = $end_data[0];
@@ -103,7 +115,7 @@ class Parser
 		return trim($out);
 	}
 
-	public function percentSearch(): float
+	public function percentSearch()
 	{
 		$percentSearchSection = $this->selector(
 			'<div class="ringchart referral-social"',
@@ -113,8 +125,11 @@ class Parser
 			false
 		);
 
+		if (empty($percentSearchSection)) return null;
+
 		$pattern = '/data-referral\=\"(.*)\"/U';
 		preg_match($pattern, $percentSearchSection, $match);
+
 		return (float)$match[1];
 	}
 
@@ -132,6 +147,9 @@ class Parser
 
 		preg_match($pattern, $linkingSites, $match);
 
+		if (empty($match))
+			return null;
+
 		return (integer)str_replace(',', '', $match[1]);
 	}
 
@@ -142,22 +160,45 @@ class Parser
 		// 2- Daily Time on Site
 		// 3- Bounce rate
 
-		$metrics = $this->selector(
+		$metricsHtml = $this->selector(
 			'<div class="ACard Half metrics " id="card_metrics">',
 			'Total Sites Linking In',
 			$this->content,
 			["\r\n", "\n", "\r", "\t", "  "],
 			false
 		);
-		$metrics = trim($metrics, " \t\n\r\0\x0B");
-		$pattern = '/<p class="small data">((.|\n)*\ )<span/U';
-		preg_match_all($pattern, $metrics, $matches);
 
-		return [
-			'daily_pageviews_per_visitor' => (float)trim($matches[1][0], " \t\n\r\0\x0B"),
-			'daily_time_on_site'         => (float)trim($matches[1][1], " \t\n\r\0\x0B"),
-			'bounce_rate'                => (float)trim($matches[1][2], "% \t\n\r\0\x0B"),
-		];
+		$metricsHtml = trim($metricsHtml, " \t\n\r\0\x0B");
+
+		$pattern = '/<p class="small data">(.+)(<span|<\/p)+/U';
+		preg_match_all($pattern, $metricsHtml, $matches);
+
+		// nullify if not set, otherwise trim and clean
+		$daily_pageviews_per_visitor = isset($matches[1][0]) ? trim($matches[1][0], " -") : null;
+		$daily_time_on_site = isset($matches[1][1]) ? trim($matches[1][1], " -") : null;
+		$bounce_rate = isset($matches[1][2]) ? trim($matches[1][2], "% -") : null;
+
+		// combine metrics' values into array
+		$metrics = compact(
+			"daily_pageviews_per_visitor",
+			"daily_time_on_site",
+			"bounce_rate",
+		);
+
+		// nullify empty strings
+		foreach ($metrics as $key => $value)
+			if (empty($value)) $metrics[$key] = null;
+
+
+		// convert string to float
+		if (isset($metrics['daily_pageviews_per_visitor']))
+			$metrics['daily_pageviews_per_visitor'] = (float)$metrics['daily_pageviews_per_visitor'];
+
+		// convert string to float
+		if (isset($metrics['bounce_rate']))
+			$metrics['bounce_rate'] = (float)$metrics['bounce_rate'];
+
+		return $metrics;
 	}
 
 	public function countries()
