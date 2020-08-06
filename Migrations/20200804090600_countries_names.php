@@ -12,6 +12,10 @@ final class CountriesNames extends Migration
 			$table->id();
 			$table->string('name')->nullable(false)->unique();
 			$table->string('code');
+
+			// in order to store emoji like country code 🇺🇸
+			$table->charset = 'utf8mb4';
+			$table->collation = 'utf8mb4_unicode_ci';
 		});
 	}
 }
