@@ -10,3 +10,22 @@
 3. Using Regex directly
     * Problems: using regex directly on a document with thousands of words and extracting only one element can cost thousands of regex step and may exceed which is also heavy but is not that bad.
 4. Sanitizing string before using regex using PHP build-in string functions which are very efficient then using regex. This solution reduces the load from tens of thousands to hundreds- which is the optimal solution.
+
+---
+# How to run:
+1.  Create a Database
+2.  Edit `config.php` with database credentials.
+3.  Install dependencies:
+    ```
+    php composer install
+    ```
+4.  Migrate the DB to create the schema
+    ```
+    php vendor/bin/phinx migrate
+    ```
+5.  <b>Optional: </b> grant execute permission `chmod +x index.php` and run using `./index.php`
+6.  Happy scraping :)
+    ```
+    php index.php
+    ```
+
