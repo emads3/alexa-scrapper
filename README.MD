@@ -19,9 +19,9 @@
     ```
     php composer install
     ```
-4.  Migrate the DB to create the schema
+4.  Import the DB Schema (can use phpmyadmin/adminer instead)
     ```
-    php vendor/bin/phinx migrate
+    mysql -u mysql_username -p db_name < mysql_dump.sql
     ```
 5.  <b>Optional: </b> grant execute permission `chmod +x index.php` and run using `./index.php`
 6.  Happy scraping :)
