@@ -19,7 +19,7 @@ final class Countries extends Migration
 			$table->foreign('countries_names_id')->references('id')->on('countries_names');
 
 			// not to duplicate website with country
-			$table->unique('website_id', 'countries_names_id');
+			$table->unique(['website_id', 'countries_names_id']);
 		});
 	}
 }

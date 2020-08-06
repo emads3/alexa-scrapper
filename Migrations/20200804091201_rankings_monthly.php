@@ -18,7 +18,7 @@ final class RankingsMonthly extends Migration
 			$table->foreign('website_id')->references('id')->on('websites');
 
 			// not to duplicate website with country
-			$table->unique('website_id', 'date');
+			$table->unique(['website_id', 'date']);
 		});
 	}
 }

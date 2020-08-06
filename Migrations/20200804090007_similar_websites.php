@@ -19,7 +19,7 @@ final class SimilarWebsites extends Migration
 			$table->foreign('website_id')->references('id')->on('websites');
 
 			// not to duplicate similar sites for the same website
-			$table->unique('website_id', 'name');
+			$table->unique(['website_id', 'name']);
 		});
 	}
 
