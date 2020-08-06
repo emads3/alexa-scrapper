@@ -1,12 +1,37 @@
+#! /usr/bin/env php
+
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+require 'vendor/autoload.php';
 
-use Core\Website;
+use Scraper\DBManager;
+use Scraper\Parser;
 
+$urls = [
+	'https://www.alexa.com/siteinfo/spyguy.com',
+	'https://www.alexa.com/siteinfo/nethome.wiki',
+	'https://www.alexa.com/siteinfo/emads3.com', // domain with less info
+	'https://www.alexa.com/siteinfo/souq.com',
+	'https://www.alexa.com/siteinfo/7enkesh.co', // domain that doesn't exist
+	'https://www.alexa.com/siteinfo/facebook.com',
+];
 
-//$websites = Website::all();
-//var_dump($websites);
-//$websites = Website::find(1);
+$db = new DBManager();
 
-//var_dump($websites);
+foreach ($urls as $url) {
+
+	echo 'Scraping ' . $url . " ..\n";
+
+	$html = file_get_contents($url);
+	$parser = new Parser($html);
+
+	echo 'Domain: ' . $parser->extractDomain() . "\n";
+
+	$data['info'] = $parser->parseWebsite();
+	$data['similarSites'] = $parser->similarSites();
+	$data['rankings'] = $parser->parseRankings();
+	$data['countries'] = $parser->countries();
+
+	$db->manageWebsiteData($data);
+
+}
