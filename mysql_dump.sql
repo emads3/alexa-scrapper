@@ -70,6 +70,33 @@ LOCK TABLES `countries_names` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `phinxlog`
+--
+
+DROP TABLE IF EXISTS `phinxlog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `phinxlog` (
+  `version` bigint(20) NOT NULL,
+  `migration_name` varchar(100) DEFAULT NULL,
+  `start_time` timestamp NULL DEFAULT NULL,
+  `end_time` timestamp NULL DEFAULT NULL,
+  `breakpoint` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`version`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `phinxlog`
+--
+
+LOCK TABLES `phinxlog` WRITE;
+/*!40000 ALTER TABLE `phinxlog` DISABLE KEYS */;
+INSERT INTO `phinxlog` VALUES (20200804075937,'Websites','2020-08-06 12:56:07','2020-08-06 12:56:07',0),(20200804090007,'SimilarWebsites','2020-08-06 12:56:07','2020-08-06 12:56:07',0),(20200804090600,'CountriesNames','2020-08-06 12:56:07','2020-08-06 12:56:07',0),(20200804090834,'Countries','2020-08-06 12:56:07','2020-08-06 12:56:07',0),(20200804091026,'Rankings','2020-08-06 12:56:07','2020-08-06 12:56:07',0),(20200804091201,'RankingsMonthly','2020-08-06 12:56:07','2020-08-06 12:56:08',0);
+/*!40000 ALTER TABLE `phinxlog` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `rankings`
 --
 
